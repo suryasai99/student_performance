@@ -18,10 +18,11 @@ class Modeltrainconfig:
 class Model_trainer:
     def __init__(self):
         self.t_model = Modeltrainconfig()
+        self.trans = datatransformation()
     def training(self,train_path,test_path):
         try:
             logging.info('taking the transformed data')
-            x_train,x_test,y_train,y_test = datatransformation.initiated_data_transformation(train_path,test_path)
+            x_train,x_test,y_train,y_test = self.trans.initiated_data_transformation(train_path,test_path)
 
             models = {
                 'linear regressor':LinearRegression(),
@@ -34,9 +35,14 @@ class Model_trainer:
 
             logging.info('evaluating the model')
             result = evaluate_model(x_train,x_test,y_train,y_test,models)
-            max_value = max(result)
+            max_value = max(result, key = result.get) 
+        
+            print(f'The best model is {max_value} and r2score is {max(result.values())}')
+            print('%%%%%%%%%%%%%%%%%%%')
 
-            print(f'The best model is {max_value} and r2score is {models[max_value]}')
+            print('scores of all the models')
+            for i,j in result.items():
+                print(f'score of {i} model is {j}')
 
             logging.info('saving the model')
             save_object(file_path=self.t_model.trained_model,
