@@ -2,6 +2,8 @@
 env_student/
 .DS_store
 *.pkl
+test.csv
+train.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
