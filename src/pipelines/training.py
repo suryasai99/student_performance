@@ -11,8 +11,8 @@ from src.components.data_transformation import datatransformation
 if __name__=='__main__':
     D_I = Dataingestion()
     train_path,test_path = D_I.initiate_data_ingestion()
-    print(train_path, test_path)
+    #print(train_path, test_path)
     data_transformation = datatransformation()
 
     x_train_arr,x_test_arr,y_train_arr,y_test_arr=data_transformation.initiated_data_transformation(train_path,test_path)
-    print(x_train_arr.head())
+    #print(x_train_arr.head())
