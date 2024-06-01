@@ -24,6 +24,7 @@ class Predictpipeline:
 
 
         except Exception as e:
+            logging.info('error occured in predict pipeline in Predictpipeline class and Predictdata method')
             raise CustomException(e,sys)
         
 class Customdata:
