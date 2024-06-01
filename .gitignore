@@ -1,7 +1,6 @@
 # environment
 env_student/
 .DS_store
-*.pkl
 test.csv
 train.csv
 
