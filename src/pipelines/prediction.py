@@ -10,8 +10,8 @@ class Predictpipeline:
         pass
     def predictdata(self,features):
         try:
-            model_path = os.path.join('artifacts/model.pkl')
-            preprocessor_path = os.path.join('artifacts/preprocessor.pkl')
+            model_path = 'artifacts/model.pkl'
+            preprocessor_path = 'artifacts/preprocessor.pkl'
 
             preprocessor = load_object(preprocessor_path)
             model = load_object(model_path)
@@ -20,8 +20,6 @@ class Predictpipeline:
             predict = model.predict(data_scaled)
 
             return predict
-
-
 
         except Exception as e:
             logging.info('error occured in predict pipeline in Predictpipeline class and Predictdata method')
@@ -36,6 +34,7 @@ class Customdata:
                  test_preparation_course,
                  reading_score,
                  writing_score):
+        
         self.gender = gender
         self.race_ethnicity = race_ethnicity
         self.parental_level_of_education = parental_level_of_education

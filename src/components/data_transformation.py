@@ -8,6 +8,8 @@ from src.utils import save_object
 from dataclasses import dataclass
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler,OneHotEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
 
 @dataclass
 class datatransformationconfig:
@@ -35,11 +37,26 @@ class datatransformation:
             cat_cols = [i for i in input_train.columns if input_train[i].dtype == 'object']
 
             logging.info('using column transformer with the pipelines ')
-            num_pipeline = StandardScaler()
-            cat_pipeline = OneHotEncoder(sparse_output=False,drop='first')
+            
+            num_pipeline = Pipeline(
+                steps=[
+                    ('imputer',SimpleImputer(strategy='median'))
+                    ('scaler',StandardScaler())
+                ]
+            )
+                
+            cat_pipeline = Pipeline(
+                steps = [
+                    ('imputer',SimpleImputer(strategy='most_frequent')),
+                    ('encoder',OneHotEncoder()),
+                    ('scaler',StandardScaler(with_mean=False))
+                ]
+            )
+
             preprocessor = ColumnTransformer([
-                ('num',num_pipeline,num_cols),
-                ('cat',cat_pipeline,cat_cols)
+                ('cat',cat_pipeline,cat_cols),
+                ('num',num_pipeline,num_cols)
+                
             ])
 
             logging.info('fitting the preprocessing pipeline to the data ')

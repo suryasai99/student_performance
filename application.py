@@ -30,9 +30,12 @@ def predict_datapoint():
        
 
         convert_data = data.intodf()
-        result = Predictpipeline().predictdata(convert_data)
+        print(convert_data)
+        
+        predict_pipeline=Predictpipeline()
+        results = predict_pipeline.predictdata(convert_data)
 
-        return render_template('form_1.html',final_result = result)
+        return render_template('form_1.html',results=results[0])
 
 
 if __name__=='__main__':

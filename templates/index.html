@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Center the button */
+        .form {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1 style="text-align: center">press predict to predict the Performance of a student in exam</h1>
+
+        <div class="form">
+            <!-- Use a button to direct to /review -->
+            <form action="/predict" method="GET">
+                <button type="submit" name="Student Exam Performance Prediction"><h1 style="text-align: center">predict</h1></button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
