@@ -29,3 +29,12 @@ def evaluate_model(x_train,x_test,y_train,y_test,models):
         logging.info('error occured in utils.evaluate_model')
         raise CustomException(e,sys)
 
+def load_object(file_path):
+    try:
+        with open (file_path,'rb') as file_obj:
+            return pkl.load(file_obj)
+
+    except Exception as e:
+        logging.info('error occured at loading the model')
+        raise CustomException(e,sys)
+    
