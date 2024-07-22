@@ -4,6 +4,13 @@ env_student/
 test.csv
 train.csv
 
+
+artifacts/Data_Ingestion/
+artifacts/Data_Transformation/
+artifacts/Model_training/
+artifacts/raw.csv
+artifacts/Model_Evaluation/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,50 +1,69 @@
+# importing libraries
 import numpy as np
 import pandas as pd
 import os,sys
 from src.logger import logging
 from src.exception import CustomException
 from sklearn.model_selection import train_test_split
-from dataclasses import dataclass
+from src.constants.training_pipeline import *
+from src.entity.artifact_entity import DataIngestionArtifact
+from src.entity.config_entity import DataIngestionConfig
 
-## Initialize the data ingestion configuration
+"""
+ingesting original data and splitting data into train and test
+    
+"""
+class DataIngestion:
+    def __init__(self, 
+                 data_ingestion_config:DataIngestionConfig): 
+        self.data_ingestion_config = data_ingestion_config
 
-@dataclass
-class dataingestionconfig:
-    train_data_path = os.path.join('artifacts/train.csv')
-    test_data_path = os.path.join('artifacts/test.csv')
+    @staticmethod
+    def read_data(file_path):
+        try:
+            logging.info(f'reading the csv file from file path:{file_path}')
+            return pd.read_csv(file_path)
+        
+        except Exception as e:
+            logging.info(f'error occured while reading the csv file from file path:{file_path}')
+            return CustomException(e,sys)    
 
-class Dataingestion:
-    def __init__(self):
-        self.data = dataingestionconfig()
     def initiate_data_ingestion(self):
         try:
-            logging.info('initiating the data ingestion')
-            os.makedirs('artifacts',exist_ok=True)
+            # reading the original data
+            df = DataIngestion.read_data(self.data_ingestion_config.original_data_filepath)
+            logging.info(f'original Dataset imported into dataframe from csv file{df.head()}')
 
-            df = pd.read_csv(os.path.join('artifacts/data.csv'))
-
-            logging.info('dividing the data into train and test')
-            train,test = train_test_split(df,
-                                          test_size=0.25,
-                                          random_state=42)
+            # dividing training and testing data
+            train_data,test_data = train_test_split(df, 
+                                                    test_size = TRAIN_TEST_SPLIT_RATIO, 
+                                                    random_state = RANDOM_STATE)
+            logging.info('divided train and test data')
             
+            # In case If we dont have artifacts folder. we need to create it
+            os.makedirs(os.path.dirname(self.data_ingestion_config.training_file_path), exist_ok = True)
 
-            train.to_csv(self.data.train_data_path,
-                         index = False,
-                         header = True)
-            test.to_csv(self.data.test_data_path,
-                        index = False,
-                        header = True)
+
+            # saving it in the artifacts path
+            train_data.to_csv(self.data_ingestion_config.training_file_path, 
+                              index = False,
+                              header = True)
             
-            logging.info('data ingestion completed')
+            test_data.to_csv(self.data_ingestion_config.testing_file_path,
+                             index = False,
+                             header = True)
+            logging.info('saved train and test data to csv')
+            
+            # saving the artifacts
+            data_ingestion_artifact = DataIngestionArtifact(
+                train_filepath = self.data_ingestion_config.training_file_path,
+                test_filepath = self.data_ingestion_config.testing_file_path
+            )
+            
+            logging.info('train and test path sent to data ingestion artifacts')
 
-            return(self.data.train_data_path,
-                   self.data.test_data_path)
+            return data_ingestion_artifact
 
         except Exception as e:
-            logging.info('Exception occured at Data Ingestion stage')
             raise CustomException(e,sys)
-        
-if __name__=='__main__':
-    sk = Dataingestion()
-    sk.initiate_data_ingestion()
+

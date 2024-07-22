@@ -1,53 +1,62 @@
-import numpy as np
+# importing libraries
 import pandas as pd
-import os,sys
+import numpy as np
 from src.logger import logging
 from src.exception import CustomException
-from src.components.data_transformation import datatransformation
-from src.utils import save_object,evaluate_model
-from dataclasses import dataclass
-from sklearn.linear_model import Ridge,ElasticNet,Lasso,LinearRegression
+import sys,os
+from sklearn.linear_model import LinearRegression,Ridge,Lasso,ElasticNet
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-from xgboost import XGBRegressor
-from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
+from sklearn.neighbors import KNeighborsRegressor
 
-@dataclass
-class Modeltrainconfig:
-    trained_model = os.path.join('artifacts/model.pkl')
+from src.utils import(save_object,
+                      load_numpy_array_data)
 
-class Model_trainer:
-    def __init__(self):
-        self.t_model = Modeltrainconfig()
-        self.trans = datatransformation()
-    def training(self,train_path,test_path):
-        try:
-            logging.info('taking the transformed data')
-            x_train,x_test,y_train,y_test = self.trans.initiated_data_transformation(train_path,test_path)
+from src.entity.artifact_entity import(DataTransformationArtifact,
+                                       ModelTrainingArtifacts)
+from src.entity.config_entity import ModelTrainingConfig
+from src.constants.training_pipeline import *
 
-            models = {
-                'linear regressor':LinearRegression(),
-                'random forest Regressor':RandomForestRegressor(),
-                'xgboost Regressor':XGBRegressor(),
-                'ridge':Ridge(),
-                'lasso':Lasso(),
-                'elastic net':ElasticNet()
-            }
-
-            logging.info('evaluating the model')
-            result = evaluate_model(x_train,x_test,y_train,y_test,models)
-            max_value = max(result, key = result.get) 
+"""
+creating model_trainer component by using data_transformation_artifact and
+as inputs and model_training_artifacts as output
+    
+"""
+class ModelTrainer:
+    def __init__(self,
+                 data_transformation_artifact:DataTransformationArtifact,
+                 model_training_config:ModelTrainingConfig): 
         
-            print(f'The best model is {max_value} and r2score is {max(result.values())}')
-            print('%%%%%%%%%%%%%%%%%%%')
+        self.data_transformation_artifact = data_transformation_artifact
+        self.model_training_config = model_training_config
 
-            print('scores of all the models')
-            for i,j in result.items():
-                print(f'score of {i} model is {j}')
+    def initiate_model_training(self):
+        try:
+            # importing x_train and y_train from data transformation artifacts
+            x_train = load_numpy_array_data(self.data_transformation_artifact.x_train_filepath)
+            y_train = load_numpy_array_data(self.data_transformation_artifact.y_train_filepath)
+            logging.info('imported x_train and y_train')
 
-            logging.info('saving the model')
-            save_object(file_path=self.t_model.trained_model,
-                        obj = models[max_value])
+            linear_regression = LinearRegression()
+            
+            # fitting x_train and y_train to random forest model
+            model = linear_regression.fit(x_train, y_train)
+            logging.info('fit the linear_regression model to x_train and y_train')
+
+            # saving the model 
+            save_object(
+                file_path = self.model_training_config.model_training_file_path,
+                obj = model
+            )
+            logging.info('saved the model')
+
+            # model training artifacts
+            model_training_artifacts = ModelTrainingArtifacts(
+                model_filepath = self.model_training_config.model_training_file_path
+            )
+            logging.info('file path saved in model training artifacts')
+            return model_training_artifacts
 
         except Exception as e:
-            logging.info('error occured in model training')
+            logging.info('error occured in initiate_model_training module')
             raise CustomException(e,sys)

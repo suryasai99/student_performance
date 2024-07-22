@@ -6,3 +6,6 @@ Flask
 seaborn
 xgboost
 Flask-Cors
+PyYAML == 6.0.1
+ipykernel == 6.29.5
+-e .
