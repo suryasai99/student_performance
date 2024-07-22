@@ -1,12 +1,14 @@
 from flask import Flask,request,render_template,jsonify
-from src.pipelines.prediction import Customdata,Predictpipeline
+from src.pipelines.prediction_pipeline import Customdata,PredictPipeline
 from src.logger import logging
 from src.exception import CustomException
 
 application = Flask(__name__)
 app = application
 
-
+"""
+api for predicting the scores using Flask
+"""
 @app.route('/')
 def home_page():
     return render_template('index.html')
@@ -32,7 +34,7 @@ def predict_datapoint():
         convert_data = data.intodf()
         print(convert_data)
         
-        predict_pipeline=Predictpipeline()
+        predict_pipeline = PredictPipeline()
         results = predict_pipeline.predictdata(convert_data)
 
         return render_template('form_1.html',results=results[0])

@@ -1,17 +1,26 @@
-import numpy as np
-import pandas as pd
-import os,sys
+import os
+import sys
 from src.logger import logging
 from src.exception import CustomException
 from src.utils import load_object
+import pandas as pd
+from src.entity.config_entity import(ModelEvaluationConfig,
+                                     ModelTrainingConfig,
+                                     DataTransformationConfig,
+                                     TrainingPipelineConfig)
 
-class Predictpipeline:
+
+class PredictPipeline:
     def __init__(self):
-        pass
+        self.training_pipeline_config = TrainingPipelineConfig()
+        self.data_transformation_config = DataTransformationConfig(self.training_pipeline_config)
+        self.model_training_config = ModelTrainingConfig(self.training_pipeline_config)
+        self.model_evaluation_config = ModelEvaluationConfig(self.training_pipeline_config)
+
     def predictdata(self,features):
         try:
-            model_path = 'artifacts/model.pkl'
-            preprocessor_path = 'artifacts/preprocessor.pkl'
+            preprocessor_path = self.data_transformation_config.preprocessor_filepath
+            model_path = self.model_training_config.model_training_file_path
 
             preprocessor = load_object(preprocessor_path)
             model = load_object(model_path)
