@@ -1,11 +1,12 @@
-pandas
-numpy
-matplotlib
-scikit-learn
-Flask
-seaborn
-xgboost
-Flask-Cors
+pandas == 2.2.2
+numpy == 2.0.1
+matplotlib == 3.9.1
+scikit-learn == 1.5.1
+Flask == 3.0.3
+seaborn == 0.13.2
+xgboost == 2.1.0
+Flask-Cors == 4.0.1
 PyYAML == 6.0.1
 ipykernel == 6.29.5
+
 -e .

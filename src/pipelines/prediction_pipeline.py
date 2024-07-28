@@ -9,7 +9,10 @@ from src.entity.config_entity import(ModelEvaluationConfig,
                                      DataTransformationConfig,
                                      TrainingPipelineConfig)
 
-
+"""
+prediction pipeline for the new data
+    
+"""
 class PredictPipeline:
     def __init__(self):
         self.training_pipeline_config = TrainingPipelineConfig()

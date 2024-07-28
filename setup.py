@@ -1,5 +1,6 @@
 from setuptools import find_packages,setup
 from typing import List
+import os
 
 HYPEN_E_DOT='-e .'
 
@@ -21,7 +22,7 @@ setup(
     version='1.0.0',
     author='surya',
     author_email='suryakadali1994@gmail.com',
-    install_requires=get_requirements('/Users/suryasaikadali/Downloads/pw_skills/end_to_End_projects/student_performance/requirements.txt'),
+    install_requires=get_requirements(os.path.join('requirements.txt')),
     packages=find_packages()
 
 )
